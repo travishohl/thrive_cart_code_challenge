@@ -11,4 +11,11 @@ final class BasketTest extends TestCase
 
         $this->assertInstanceOf(Basket::class, $basket);
     }
+
+    public function testTotalMethodReturnsFloat(): void
+    {
+        $basket = new Basket();
+
+        $this->assertIsFloat($basket->total());
+    }
 }

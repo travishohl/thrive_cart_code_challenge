@@ -7,4 +7,9 @@ class Basket
     public function __construct()
     {
     }
+
+    public function total(): float
+    {
+        return 12.34;
+    }
 }
