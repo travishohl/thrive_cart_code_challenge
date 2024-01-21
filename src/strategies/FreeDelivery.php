@@ -11,7 +11,7 @@ class FreeDelivery implements DeliveryChargeRule
      *
      * @return int
      */
-    public static function calculateDeliveryCharges(int $basket_total_in_cents): int
+    public function calculateDeliveryCharges(int $basket_total_in_cents): int
     {
         return 0;
     }

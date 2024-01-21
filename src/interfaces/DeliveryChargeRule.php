@@ -4,5 +4,5 @@ namespace ThriftCartCodeChallenge\Interfaces;
 
 interface DeliveryChargeRule
 {
-    public static function calculateDeliveryCharges(int $basket_total): int;
+    public function calculateDeliveryCharges(int $basket_total): int;
 }
