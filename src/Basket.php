@@ -2,14 +2,16 @@
 
 namespace ThriftCartCodeChallenge;
 
+use Money\Money;
+
 class Basket
 {
     public function __construct()
     {
     }
 
-    public function total(): float
+    public function total(): Money
     {
-        return 12.34;
+        return Money::USD(1234);
     }
 }
