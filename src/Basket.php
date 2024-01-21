@@ -2,6 +2,7 @@
 
 namespace ThriftCartCodeChallenge;
 
+use DomainException;
 use Money\Money;
 
 class Basket
@@ -11,7 +12,7 @@ class Basket
      */
     private array $products = [];
 
-    public function __construct()
+    public function __construct(private Catalog $catalog)
     {
     }
 
@@ -22,6 +23,10 @@ class Basket
      */
     public function add(string $product_code): void
     {
+        if (!$this->catalog->productExists($product_code)) {
+            throw new DomainException("Product \"$product_code\" does not exist in the product catalog.");
+        }
+
         $lowercase_product_code = strtolower($product_code);
 
         $this->products[] = $lowercase_product_code;
