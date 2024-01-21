@@ -20,4 +20,4 @@ docker_image=$1
 shift
 
 # Run the Docker container, mounting the current directory
-docker run --rm --interactive --tty --volume "$current_directory":/app --workdir "/app" "$docker_image" "$@"
+docker run --rm --interactive --tty --volume "$current_directory":/project_root --workdir "/project_root" "$docker_image" "$@"
