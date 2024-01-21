@@ -1,0 +1,19 @@
+{
+    "name": "travishohl/thrift_cart_code_challenge",
+    "description": "An implementation of the solution to Thrift Cart's developer code challenge.",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "travishohl\\ThriftCartCodeChallenge\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "travishohl"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^10"
+    }
+}

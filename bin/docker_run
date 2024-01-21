@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Check if Docker is installed
+if ! command -v docker &> /dev/null; then
+    echo "Docker is not installed. Please install Docker before running this script."
+    exit 1
+fi
+
+# Check if any arguments are provided
+if [ "$#" -eq 0 ]; then
+    echo "Usage: $0 [docker_run] [additional_composer_arguments]"
+    exit 1
+fi
+
+# Get the current directory
+current_directory=$(pwd)
+
+# Get the Docker image from the first argument
+docker_image=$1
+shift
+
+# Run the Docker container, mounting the current directory
+docker run --rm --interactive --tty --volume "$current_directory":/app --workdir "/app" "$docker_image" "$@"
