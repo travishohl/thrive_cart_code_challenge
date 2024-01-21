@@ -19,4 +19,28 @@ final class BasketTest extends TestCase
 
         $this->assertInstanceOf(Money::class, $basket->total());
     }
+
+    public function test_add_method_adds_a_product_to_the_basket(): void
+    {
+        $basket = new Basket();
+
+        $product_code = 'some_product_code';
+
+        $basket->add($product_code);
+
+        $this->assertTrue($basket->isProductAdded($product_code));
+    }
+
+    public function test_isProductAdded_method_is_not_case_sensitive(): void
+    {
+        $basket = new Basket();
+
+        $product_code = 'SoMe_ProDuCt_CoDe';
+
+        $basket->add($product_code);
+
+        $uppercase_product_code = strtoupper($product_code);
+
+        $this->assertTrue($basket->isProductAdded($uppercase_product_code));
+    }
 }
