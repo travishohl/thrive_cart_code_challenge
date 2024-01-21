@@ -3,6 +3,7 @@
 namespace ThriftCartCodeChallenge;
 
 use DomainException;
+use ThriftCartCodeChallenge\Interfaces\DeliveryChargeRule;
 use ThriftCartCodeChallenge\Product;
 
 class Basket
@@ -12,8 +13,9 @@ class Basket
      */
     private array $products = [];
 
-    public function __construct(private Catalog $catalog)
+    public function __construct(private Catalog $catalog, private DeliveryChargeRule $delivery_charge_rule)
     {
+        // Do nothing.
     }
 
     /**
@@ -51,7 +53,7 @@ class Basket
      */
     public function total(): int
     {
-        $total_price = array_reduce(
+        $total_basket = array_reduce(
             $this->products,
             function ($carry, $product) {
                 return $carry + $product->getPrice();
@@ -59,6 +61,8 @@ class Basket
             0
         );
 
-        return $total_price;
+        $delivery_charges = $this->delivery_charge_rule->calculateDeliveryCharges($total_basket);
+
+        return $total_basket + $delivery_charges;
     }
 }
