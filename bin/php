@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Assuming both scripts are in the same directory
-current_directory=$(dirname "$0")
-
-# Pass image name and remaining arguments to docker_run script.
-source "$current_directory/docker_run" php:8.1-cli "$@"

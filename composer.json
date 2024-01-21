@@ -3,6 +3,10 @@
     "description": "An implementation of the solution to Thrift Cart's developer code challenge.",
     "type": "project",
     "license": "MIT",
+    "scripts": {
+      "analyze": "phpstan analyse --level 9 src tests",
+      "test": "phpunit tests"
+    },
     "autoload": {
         "psr-4": {
             "ThriftCartCodeChallenge\\": "src/"
