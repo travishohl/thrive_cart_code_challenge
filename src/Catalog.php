@@ -2,29 +2,29 @@
 
 namespace ThriftCartCodeChallenge;
 
-use Money\Money;
+use ThriftCartCodeChallenge\Product;
 
 class Catalog
 {
     /**
-     * @var array<string> $products
+     * @var array<Product> $products
      */
     private array $products = [];
 
     /**
-     * @param array<string> $product_list
+     * @param array<Product> $product_list
      *
      * @return self
      */
     private function __construct(array $product_list)
     {
         foreach ($product_list as $product) {
-            $this->products[] = strtolower($product);
+            $this->products[] = $product;
         }
     }
 
     /**
-     * @param array<string> $product_list
+     * @param array<Product> $product_list
      *
      * @return self
      */
@@ -34,14 +34,18 @@ class Catalog
     }
 
     /**
-     * @param string $product_code
+     * @param Product $product
      *
      * @return bool
      */
-    public function productExists(string $product_code): bool
+    public function productExists(Product $product): bool
     {
-        $lowercase_product_code = strtolower($product_code);
+        $input_product_code = $product->getCode();
 
-        return in_array($lowercase_product_code, $this->products);
+        foreach ($this->products as $product) {
+            if ($product->getCode() === $input_product_code) return true;
+        }
+
+        return false;
     }
 }

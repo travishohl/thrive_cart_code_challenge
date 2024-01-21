@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-use DomainException;
-use Money\Money;
 use PHPUnit\Framework\TestCase;
 
 use ThriftCartCodeChallenge\Basket;
 use ThriftCartCodeChallenge\Catalog;
+use ThriftCartCodeChallenge\Product;
 
 final class BasketTest extends TestCase
 {
@@ -16,49 +15,60 @@ final class BasketTest extends TestCase
         $this->assertInstanceOf(Basket::class, $basket);
     }
 
-    public function test_total_method_returns_instance_of_money(): void
+    public function test_total_method_returns_int_representing_total_basket_price_in_cents(): void
     {
-        $basket = new Basket(Catalog::fromProductList([]));
+        $basket = new Basket(
+            Catalog::fromProductList([
+                Product::fromCodeAndPrice('ABC', 100),
+            ])
+        );
 
-        $this->assertInstanceOf(Money::class, $basket->total());
+        $basket->add(Product::fromCodeAndPrice('ABC', 100));
+        $basket->add(Product::fromCodeAndPrice('ABC', 100));
+
+        $this->assertSame($basket->total(), 200);
     }
 
     public function test_add_method_adds_a_product_to_the_basket(): void
     {
-        $product_code = 'some_product_code';
+        $product = Product::fromCodeAndPrice('some_product_code', 1000);
 
-        $basket = new Basket(Catalog::fromProductList([
-            $product_code,
-        ]));
+        $basket = new Basket(
+            Catalog::fromProductList([$product])
+        );
 
-        $basket->add($product_code);
+        $basket->add($product);
 
-        $this->assertTrue($basket->isProductAdded($product_code));
+        $this->assertTrue($basket->isProductAdded($product));
     }
 
     public function test_add_method_throws_domain_exception_for_products_not_in_catalog(): void
     {
-        $basket = new Basket(Catalog::fromProductList([]));
+        $product = Product::fromCodeAndPrice('not_in_catalog', 12345);
 
-        $product_code = 'some_product_code';
+        $basket = new Basket(
+            Catalog::fromProductList([])
+        );
 
         $this->expectException(DomainException::class);
 
-        $basket->add($product_code);
+        $basket->add($product);
     }
 
     public function test_isProductAdded_method_is_not_case_sensitive(): void
     {
-        $product_code = 'SoMe_ProDuCt_CoDe';
+        $mixed_case_product_code = 'SoMe_ProDuCt_CoDe';
+        $product_with_mixed_case_code = Product::fromCodeAndPrice($mixed_case_product_code, 1000);
 
-        $basket = new Basket(Catalog::fromProductList([
-            $product_code,
-        ]));
+        $basket = new Basket(
+            Catalog::fromProductList([$product_with_mixed_case_code])
+        );
 
-        $basket->add($product_code);
+        $basket->add($product_with_mixed_case_code);
 
-        $uppercase_product_code = strtoupper($product_code);
+        $uppercase_product_code = strtoupper($mixed_case_product_code);
+        $product_with_uppercase_code = Product::fromCodeAndPrice($uppercase_product_code, 1000);
 
-        $this->assertTrue($basket->isProductAdded($uppercase_product_code));
+        $this->assertTrue($basket->isProductAdded($product_with_uppercase_code));
     }
 }

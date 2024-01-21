@@ -3,12 +3,12 @@
 namespace ThriftCartCodeChallenge;
 
 use DomainException;
-use Money\Money;
+use ThriftCartCodeChallenge\Product;
 
 class Basket
 {
     /**
-     * @var array<string> $products
+     * @var array<Product> $products
      */
     private array $products = [];
 
@@ -17,38 +17,48 @@ class Basket
     }
 
     /**
-     * @param string $product_code
+     * @param Product $product
      *
      * @return void
      */
-    public function add(string $product_code): void
+    public function add(Product $product): void
     {
-        if (!$this->catalog->productExists($product_code)) {
-            throw new DomainException("Product \"$product_code\" does not exist in the product catalog.");
+        if (!$this->catalog->productExists($product)) {
+            throw new DomainException("Cannot add product \"$product\" as it does not exist in the catalog.");
         }
 
-        $lowercase_product_code = strtolower($product_code);
-
-        $this->products[] = $lowercase_product_code;
+        $this->products[] = $product;
     }
 
     /**
-     * @param string $product_code
+     * @param Product $product
      *
      * @return bool
      */
-    public function isProductAdded(string $product_code): bool
+    public function isProductAdded(Product $product): bool
     {
-        $lowercase_product_code = strtolower($product_code);
+        $input_product_code = $product->getCode();
 
-        return in_array($lowercase_product_code, $this->products);
+        foreach ($this->products as $product) {
+            if ($product->getCode() === $input_product_code) return true;
+        }
+
+        return false;
     }
 
     /**
-     * @return Money
+     * @return int
      */
-    public function total(): Money
+    public function total(): int
     {
-        return Money::USD(1234);
+        $total_price = array_reduce(
+            $this->products,
+            function ($carry, $product) {
+                return $carry + $product->getPrice();
+            },
+            0
+        );
+
+        return $total_price;
     }
 }
