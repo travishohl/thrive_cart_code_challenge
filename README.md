@@ -1,6 +1,6 @@
-# travishohl/thrift_cart_code_challenge
+# travishohl/thrive_cart_code_challenge
 
-An implementation of the solution to Thrift Cart's developer code challenge.
+An implementation of the solution to Thrive Cart's developer code challenge.
 
 ## Prerequisites
 
