@@ -2,9 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 
-use ThriftCartCodeChallenge\Strategies\LargerBasketsDecreaseDeliveryCharge;
+use ThriftCartCodeChallenge\Strategies\LargerBasketsDecreaseDeliveryChargeRule;
 
-final class LargerBasketsDecreaseDeliveryChargeTest extends TestCase
+final class LargerBasketsDecreaseDeliveryChargeRuleTest extends TestCase
 {
     public function test_calculateDeliveryCharges_returns_4_95_for_totals_under_50_dollars(): void
     {
@@ -17,7 +17,7 @@ final class LargerBasketsDecreaseDeliveryChargeTest extends TestCase
             4999,
         ];
 
-        $strategy = new LargerBasketsDecreaseDeliveryCharge();
+        $strategy = new LargerBasketsDecreaseDeliveryChargeRule();
 
         foreach ($totals_under_fifty_dollars as $basket_total) {
             $delivery_charge = $strategy->calculateDeliveryCharges($basket_total);
@@ -36,7 +36,7 @@ final class LargerBasketsDecreaseDeliveryChargeTest extends TestCase
             8999,
         ];
 
-        $strategy = new LargerBasketsDecreaseDeliveryCharge();
+        $strategy = new LargerBasketsDecreaseDeliveryChargeRule();
 
         foreach ($totals_under_ninety_dollars as $basket_total) {
             $delivery_charge = $strategy->calculateDeliveryCharges($basket_total);
@@ -56,7 +56,7 @@ final class LargerBasketsDecreaseDeliveryChargeTest extends TestCase
             100000000,
         ];
 
-        $strategy = new LargerBasketsDecreaseDeliveryCharge();
+        $strategy = new LargerBasketsDecreaseDeliveryChargeRule();
 
         foreach ($totals_greater_than_or_equal_to_ninety_dollars as $basket_total) {
             $delivery_charge = $strategy->calculateDeliveryCharges($basket_total);

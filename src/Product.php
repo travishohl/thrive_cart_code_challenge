@@ -26,6 +26,11 @@ class Product
         return new self($product_code, $product_price_in_cents);
     }
 
+    public function calculateHalfOffDiscount(): int
+    {
+        return (int) round($this->getPrice() / 2);
+    }
+
     public function getCode(): string
     {
         return $this->product_code;

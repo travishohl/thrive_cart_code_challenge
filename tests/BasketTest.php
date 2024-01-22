@@ -4,8 +4,9 @@ use PHPUnit\Framework\TestCase;
 
 use ThriftCartCodeChallenge\Basket;
 use ThriftCartCodeChallenge\Catalog;
-use ThriftCartCodeChallenge\Strategies\FreeDelivery;
-use ThriftCartCodeChallenge\Strategies\LargerBasketsDecreaseDeliveryCharge;
+use ThriftCartCodeChallenge\Strategies\FreeDeliveryChargeRule;
+use ThriftCartCodeChallenge\Strategies\LargerBasketsDecreaseDeliveryChargeRule;
+use ThriftCartCodeChallenge\Strategies\SecondHalfPriceSpecialOfferRule;
 use ThriftCartCodeChallenge\Product;
 
 final class BasketTest extends TestCase
@@ -14,7 +15,8 @@ final class BasketTest extends TestCase
     {
         $basket = new Basket(
             Catalog::fromProductList([]),
-            new FreeDelivery()
+            new FreeDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $this->assertInstanceOf(Basket::class, $basket);
@@ -26,7 +28,8 @@ final class BasketTest extends TestCase
 
         $basket = new Basket(
             Catalog::fromProductList([$product]),
-            new LargerBasketsDecreaseDeliveryCharge()
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $basket->add($product);
@@ -40,7 +43,8 @@ final class BasketTest extends TestCase
 
         $basket = new Basket(
             Catalog::fromProductList([]),
-            new LargerBasketsDecreaseDeliveryCharge()
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $this->expectException(DomainException::class);
@@ -55,7 +59,8 @@ final class BasketTest extends TestCase
 
         $basket = new Basket(
             Catalog::fromProductList([$product_with_mixed_case_code]),
-            new LargerBasketsDecreaseDeliveryCharge()
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $basket->add($product_with_mixed_case_code);
@@ -72,28 +77,87 @@ final class BasketTest extends TestCase
             Catalog::fromProductList([
                 Product::fromCodeAndPrice('ABC', 100),
             ]),
-            new FreeDelivery()
+            new FreeDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $basket->add(Product::fromCodeAndPrice('ABC', 100));
         $basket->add(Product::fromCodeAndPrice('ABC', 100));
 
-        $this->assertSame($basket->total(), 200);
+        $this->assertSame(200, $basket->total());
     }
 
-    public function test_total_method_correctly_considers_delivery_charges(): void
+    public function test_total_method_correctly_calculates_expected_total_from_instructions_1(): void
     {
         $basket = new Basket(
             Catalog::fromProductList([
                 Product::fromCodeAndPrice('B01', 795),
                 Product::fromCodeAndPrice('G01', 2495),
             ]),
-            new LargerBasketsDecreaseDeliveryCharge()
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
         );
 
         $basket->add(Product::fromCodeAndPrice('B01', 795));
         $basket->add(Product::fromCodeAndPrice('G01', 2495));
 
-        $this->assertSame($basket->total(), 3785);
+        $this->assertSame(3785, $basket->total());
+    }
+
+    public function test_total_method_correctly_calculates_expected_total_from_instructions_2(): void
+    {
+        $basket = new Basket(
+            Catalog::fromProductList([
+                Product::fromCodeAndPrice('R01', 3295),
+                Product::fromCodeAndPrice('R01', 3295),
+            ]),
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
+        );
+
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+
+        $this->assertSame(5437, $basket->total());
+    }
+
+    public function test_total_method_correctly_calculates_expected_total_from_instructions_3(): void
+    {
+        $basket = new Basket(
+            Catalog::fromProductList([
+                Product::fromCodeAndPrice('R01', 3295),
+                Product::fromCodeAndPrice('G01', 2495),
+            ]),
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
+        );
+
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+        $basket->add(Product::fromCodeAndPrice('G01', 2495));
+
+        $this->assertSame(6085, $basket->total());
+    }
+
+    public function test_total_method_correctly_calculates_expected_total_from_instructions_4(): void
+    {
+        $basket = new Basket(
+            Catalog::fromProductList([
+                Product::fromCodeAndPrice('B01', 795),
+                Product::fromCodeAndPrice('B01', 795),
+                Product::fromCodeAndPrice('R01', 3295),
+                Product::fromCodeAndPrice('R01', 3295),
+                Product::fromCodeAndPrice('R01', 3295),
+            ]),
+            new LargerBasketsDecreaseDeliveryChargeRule(),
+            new SecondHalfPriceSpecialOfferRule(),
+        );
+
+        $basket->add(Product::fromCodeAndPrice('B01', 795));
+        $basket->add(Product::fromCodeAndPrice('B01', 795));
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+        $basket->add(Product::fromCodeAndPrice('R01', 3295));
+
+        $this->assertSame(9827, $basket->total());
     }
 }

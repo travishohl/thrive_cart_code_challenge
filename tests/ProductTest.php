@@ -33,4 +33,11 @@ final class ProductTest extends TestCase
 
         $this->assertSame($product->getCode(), 'ABC');
     }
+
+    public function test_calculateHalfOffDiscount_returns_the_price_divided_by_two_around_rounded_to_the_nearest_cent(): void
+    {
+        $product = Product::fromCodeAndPrice('DEF', 3295);
+
+        $this->assertSame($product->calculateHalfOffDiscount(), 1648);
+    }
 }

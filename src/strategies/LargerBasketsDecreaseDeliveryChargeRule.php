@@ -4,7 +4,7 @@ namespace ThriftCartCodeChallenge\Strategies;
 
 use ThriftCartCodeChallenge\Interfaces\DeliveryChargeRule;
 
-class FreeDelivery implements DeliveryChargeRule
+class LargerBasketsDecreaseDeliveryChargeRule implements DeliveryChargeRule
 {
     /**
      * @param int $basket_total_in_cents
@@ -13,6 +13,14 @@ class FreeDelivery implements DeliveryChargeRule
      */
     public function calculateDeliveryCharges(int $basket_total_in_cents): int
     {
+        if ($basket_total_in_cents < 5000) {
+            return 495;
+        }
+
+        if ($basket_total_in_cents < 9000) {
+            return 295;
+        }
+
         return 0;
     }
 }
